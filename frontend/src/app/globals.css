@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Design tokens ----------
+   Light is the default; `.dark` (set by next-themes) swaps the same roles. */
+:root {
+  --bg: #f8f8f7;
+  --surface: #ffffff;
+  --surface-2: #f3f3f1;
+  --surface-3: #ebebe8;
+  --border: rgba(11, 11, 11, 0.09);
+  --border-strong: rgba(11, 11, 11, 0.16);
+  --fg: #0b0b0b;
+  --fg-2: #52514e;
+  --fg-3: #898781;
+  --accent: #4f46e5;
+  --accent-fg: #ffffff;
+  --accent-soft: rgba(79, 70, 229, 0.09);
+  --ring: rgba(79, 70, 229, 0.45);
+
+  /* status (always paired with icon + label) */
+  --good: #0a8a0a;
+  --good-soft: rgba(12, 163, 12, 0.1);
+  --warn: #b57800;
+  --warn-soft: rgba(250, 178, 25, 0.16);
+  --bad: #c62f2f;
+  --bad-soft: rgba(208, 59, 59, 0.1);
+  --info: #2a78d6;
+  --info-soft: rgba(42, 120, 214, 0.1);
+
+  /* charts (dataviz reference palette, light steps) */
+  --chart-surface: #ffffff;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #d03b3b;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.04), 0 4px 16px -8px rgba(11, 11, 11, 0.08);
+}
+
+.dark {
+  --bg: #0a0a0b;
+  --surface: #121214;
+  --surface-2: #18181b;
+  --surface-3: #222226;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.13);
+  --fg: #f0efec;
+  --fg-2: #b5b4ad;
+  --fg-3: #7d7c76;
+  --accent: #8b87ff;
+  --accent-fg: #0b0b0b;
+  --accent-soft: rgba(139, 135, 255, 0.12);
+  --ring: rgba(139, 135, 255, 0.5);
+
+  --good: #3ccf3c;
+  --good-soft: rgba(12, 163, 12, 0.16);
+  --warn: #fab219;
+  --warn-soft: rgba(250, 178, 25, 0.13);
+  --bad: #f06a6a;
+  --bad-soft: rgba(208, 59, 59, 0.17);
+  --info: #5a9cec;
+  --info-soft: rgba(57, 135, 229, 0.15);
+
+  --chart-surface: #121214;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --grid: #2c2c2a;
+  --axis: #383835;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-ring: var(--ring);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --shadow-card: var(--shadow);
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Subtle dot grid used behind hero / command center visuals */
+.dot-grid {
+  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

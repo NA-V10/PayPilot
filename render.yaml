@@ -1,0 +1,58 @@
+# Render Blueprint: PostgreSQL + PayPilot API (FastAPI) + PayPilot Web (Next.js).
+# Render → New → Blueprint → select this repo. Fill the `sync: false` values when prompted.
+
+databases:
+  - name: paypilot-db
+    plan: free
+    databaseName: paypilot
+    user: paypilot
+
+services:
+  - type: web
+    name: paypilot-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    # Runs Alembic migrations, seeds demo data if the DB is empty, then serves.
+    startCommand: python -m app.db.seed && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.1
+      - key: DATABASE_URL
+        fromDatabase:
+          name: paypilot-db
+          property: connectionString
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_ENVIRONMENT
+        value: sandbox
+      - key: PAYPAL_SETTLEMENT_CURRENCY
+        value: USD
+      - key: OPENAI_API_KEY
+        sync: false
+      # Public URL of paypilot-web, e.g. https://paypilot-web.onrender.com
+      - key: FRONTEND_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: DEMO_MODE
+        value: "true"
+
+  - type: web
+    name: paypilot-web
+    runtime: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Public URL of paypilot-api, e.g. https://paypilot-api.onrender.com
+      # Baked in at build time: redeploy the web service after changing it.
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
