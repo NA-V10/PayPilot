@@ -4,6 +4,21 @@
 >
 > **AI can reason. PayPilot decides if it can spend.**
 
+## Live demo
+
+| | Link |
+| --- | --- |
+| **Guided 2-minute demo** | https://paypilot-web-qv38.onrender.com/demo |
+| Command Center (run the scenarios) | https://paypilot-web-qv38.onrender.com/command-center |
+| Console dashboard | https://paypilot-web-qv38.onrender.com/dashboard |
+| Interactive architecture | https://paypilot-web-qv38.onrender.com/architecture |
+| API docs (OpenAPI) | https://paypilot-api-fi9v.onrender.com/docs |
+| System status | https://paypilot-api-fi9v.onrender.com/api/system/status |
+
+Payments run against the **real PayPal Sandbox** (Orders v2). To complete a payment in the PayPal popup, log in with a PayPal **sandbox personal account**. Hosted on Render's free tier: the first request after a period of inactivity can take about a minute while the services wake up.
+
+---
+
 AI agents can understand requests, search and propose purchases, but they should never hold unlimited spending authority. PayPilot sits between agents and PayPal. Every proposed payment passes **AgentShield**, the **Risk Engine**, the **Policy Engine** and the **Approval Engine**. Only then can PayPal execute it.
 
 | Layer | Role |
@@ -239,9 +254,26 @@ cd backend && .venv/Scripts/python -m pytest
 
 ## 16. Deployment
 
-- **Database:** create a Neon Postgres database and copy its connection string.
-- **Backend (Render):** `render.yaml` is a ready blueprint (root `backend/`, start command migrates, seeds, then serves). Set `DATABASE_URL`, PayPal keys, `FRONTEND_URL=https://<your-app>.vercel.app` and `CORS_ORIGINS` to the same value. `*.vercel.app` preview origins are also allowed.
-- **Frontend (Vercel):** import the repo with root directory `frontend` and set `NEXT_PUBLIC_API_URL=https://<your-api>.onrender.com`.
+PayPilot is deployed on **Render** from the [`render.yaml`](render.yaml) Blueprint, which creates three resources:
+
+| Resource | Type | Notes |
+| --- | --- | --- |
+| `paypilot-db` | PostgreSQL | Connection string injected into the API automatically |
+| `paypilot-api` | Python web service | Runs migrations, seeds demo data if the DB is empty, then serves |
+| `paypilot-web` | Node web service | Next.js production build |
+
+1. Push the repo to GitHub.
+2. In Render: **New → Blueprint**, then select the repo.
+3. Fill in the secret values:
+   - `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` (sandbox)
+   - `OPENAI_API_KEY` (optional)
+   - `FRONTEND_URL` and `CORS_ORIGINS`: the web service's URL
+   - `NEXT_PUBLIC_API_URL`: the API service's URL
+4. If Render gives a service a URL different from the one you entered (it adds a suffix when a name is taken), update the variables. Changing `NEXT_PUBLIC_API_URL` needs a **manual redeploy** of `paypilot-web`, because it is built into the site.
+
+**PayPal sandbox accounts:** use a **US** sandbox Business account (linked to the REST app) and a **US** sandbox Personal account to pay. PayPal does not support payments within India, so Indian sandbox accounts fail with *"This seller doesn't accept payments in your currency"*.
+
+Vercel also works for the frontend: set root directory `frontend` and `NEXT_PUBLIC_API_URL`. The API already accepts `*.vercel.app` and `*.onrender.com` origins.
 
 ## 17. Security
 
